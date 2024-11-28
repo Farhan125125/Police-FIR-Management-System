@@ -1,0 +1,254 @@
+#include <iostream>
+#include <queue>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+// Criminal structure
+struct Criminal {
+    string name;
+    int age;
+    string address;
+};
+
+// FIR structure
+struct FIR {
+    string caseNumber;
+    string description;
+    string status;
+};
+
+// Queues and stacks for data storage
+queue<Criminal> criminalQueue;
+stack<FIR> firStack;
+
+// Function prototypes
+void adminLogin();
+void displayMenu();
+void criminalMenu();
+void firMenu();
+void addCriminalData();
+void deleteCriminalData();
+void issueFIR();
+void searchCriminalData();
+void firReport();
+void criminalReport();
+
+int main() {
+    adminLogin();
+    return 0;
+}
+
+void adminLogin() {
+    string username, password;
+    cout << "Enter username: ";
+    cin >> username;
+    cout << "Enter password: ";
+    cin >> password;
+
+    if (username == "admin" && password == "admin123") {
+        displayMenu();
+    } else {
+        cout << "Invalid credentials. Exiting...\n";
+    }
+}
+
+void displayMenu() {
+    int choice;
+    do {
+        cout << "\nAdmin Menu\n";
+        cout << "1. Criminal Record\n";
+        cout << "2. FIR\n";
+        cout << "3. Reports\n";
+        cout << "0. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                criminalMenu();
+                break;
+            case 2:
+                firMenu();
+                break;
+            case 3:
+                cout << "1. FIR Report\n";
+                cout << "2. Criminal Report\n";
+                cout << "0. Back\n";
+                int reportChoice;
+                cin >> reportChoice;
+                if (reportChoice == 1) firReport();
+                else if (reportChoice == 2) criminalReport();
+                break;
+            case 0:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 0);
+}
+
+void criminalMenu() {
+    int choice;
+    do {
+        cout << "\nCriminal Record Menu\n";
+        cout << "1. Add Criminal Data\n";
+        cout << "2. Delete Criminal Data\n";
+        cout << "3. Search Criminal Data\n";
+        cout << "0. Back to Admin Menu\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addCriminalData();
+                break;
+            case 2:
+                deleteCriminalData();
+                break;
+            case 3:
+                searchCriminalData();
+                break;
+            case 0:
+                cout << "Returning to Admin Menu...\n";
+                break;
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 0);
+}
+
+void firMenu() {
+    int choice;
+    do {
+        cout << "\nFIR Menu\n";
+        cout << "1. Issue FIR\n";
+        cout << "2. FIR Report\n";
+        cout << "0. Back to Admin Menu\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                issueFIR();
+                break;
+            case 2:
+                firReport();
+                break;
+            case 0:
+                cout << "Returning to Admin Menu...\n";
+                break;
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 0);
+}
+
+// Add criminal data using enqueue
+void addCriminalData() {
+    Criminal criminal;
+    cout << "Enter Criminal Details:\n";
+    cout << "Name: ";
+    cin.ignore();
+    getline(cin, criminal.name);
+    cout << "Age: ";
+    cin >> criminal.age;
+    cout << "Address: ";
+    cin.ignore();
+    getline(cin, criminal.address);
+
+    criminalQueue.push(criminal);
+    cout << "Criminal data added successfully.\n";
+}
+
+// Delete criminal data using dequeue
+void deleteCriminalData() {
+    if (!criminalQueue.empty()) {
+        Criminal deletedCriminal = criminalQueue.front();
+        criminalQueue.pop();
+        cout << "Deleted Criminal: " << deletedCriminal.name << endl;
+    } else {
+        cout << "No criminals available to delete.\n";
+    }
+}
+
+// Issue FIR using push
+void issueFIR() {
+    if (!criminalQueue.empty()) {
+        FIR fir;
+        cout << "Enter FIR Details:\n";
+        cout << "Case Number: ";
+        cin.ignore();
+        getline(cin, fir.caseNumber);
+        cout << "Description: ";
+        getline(cin, fir.description);
+        fir.status = "Pending";
+
+        firStack.push(fir);
+        cout << "FIR issued successfully.\n";
+    } else {
+        cout << "No criminals available to issue FIR.\n";
+    }
+}
+
+// Search criminal data using linear search
+void searchCriminalData() {
+    if (!criminalQueue.empty()) {
+        string searchName;
+        cout << "Enter the name of the criminal to search: ";
+        cin.ignore();
+        getline(cin, searchName);
+
+        queue<Criminal> tempQueue = criminalQueue;
+        bool found = false;
+
+        while (!tempQueue.empty()) {
+            Criminal current = tempQueue.front();
+            tempQueue.pop();
+            if (current.name == searchName) {
+                cout << "Criminal Found:\n";
+                cout << "Name: " << current.name << "\nAge: " << current.age << "\nAddress: " << current.address << endl;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            cout << "Criminal not found.\n";
+        }
+    } else {
+        cout << "No criminals available to search.\n";
+    }
+}
+
+// Generate FIR report using stack traversal
+void firReport() {
+    if (!firStack.empty()) {
+        stack<FIR> tempStack = firStack;
+        cout << "FIR Report:\n";
+        while (!tempStack.empty()) {
+            FIR current = tempStack.top();
+            tempStack.pop();
+            cout << "Case Number: " << current.caseNumber << "\nDescription: " << current.description << "\nStatus: " << current.status << "\n\n";
+        }
+    } else {
+        cout << "No FIRs available for the report.\n";
+    }
+}
+
+// Generate criminal report using queue traversal
+void criminalReport() {
+    if (!criminalQueue.empty()) {
+        queue<Criminal> tempQueue = criminalQueue;
+        cout << "Criminal Report:\n";
+        while (!tempQueue.empty()) {
+            Criminal current = tempQueue.front();
+            tempQueue.pop();
+            cout << "Name: " << current.name << "\nAge: " << current.age << "\nAddress: " << current.address << "\n\n";
+        }
+    } else {
+        cout << "No criminals available for the report.\n";
+    }
+}
